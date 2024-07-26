@@ -2,9 +2,9 @@
 
 DB_HOST=localhost
 DB_PORT=5432
-DB_USER=postgres
-DB_PASSWORD=Cjroxas14!
-DB_NAME=auctiondb
+DB_USER=root
+DB_PASSWORD=admin
+DB_NAME=auction-db
 MIGRATIONS_DIR=/docker-entrypoint-initdb.d
 
 run:

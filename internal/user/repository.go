@@ -1,11 +1,16 @@
 package user
 
-import "gorm.io/gorm"
+import (
+	"gorm.io/gorm"
+)
 
 type UserRepository interface {
 	CreateUser(user *User) error
 	GetUserByEmail(email string) (*User, error)
 	GetUserByUsername(username string) (*User, error)
+	UpdateUser(user *UpdateUserRequest, userID string) error
+	GetAllUsers() ([]User, error)
+	DeleteUser(userID string) error
 }
 
 type repository struct {
@@ -30,4 +35,31 @@ func (r *repository) GetUserByUsername(username string) (*User, error) {
 	var user User
 	err := r.db.Where("username = ?", username).First(&user).Error
 	return &user, err
+}
+
+func (r *repository) UpdateUser(user *UpdateUserRequest, userID string) error {
+	return r.db.Model(&User{}).Where("id = ?", userID).Updates(User{
+		Username: user.Username,
+		Email: user.Email,
+		FirstName: user.FirstName,
+		LastName: user.LastName,
+		Phone: user.Phone,
+		Role: user.Role,
+		Address: user.Address,
+		ProfilePicture: user.ProfilePicture,
+	}).Error
+}
+
+func (r *repository) GetAllUsers() ([]User, error) {
+	var users []User
+	err := r.db.Find(&users).Error
+	if err != nil {
+		return nil, err
+	}
+
+	return users, err
+}
+
+func (r *repository) DeleteUser(userID string) error {
+	return r.db.Where("id = ?", userID).Delete(&User{}).Error
 }

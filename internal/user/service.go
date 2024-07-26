@@ -1,11 +1,16 @@
 package user
 
-import "golang.org/x/crypto/bcrypt"
+import (
+	"golang.org/x/crypto/bcrypt"
+)
 
 type UserService interface {
 	RegisterUser(createUserRequest CreateUserRequest) error
 	AuthenticateUser(email, password string) (*User, error)
 	GetUser(userID string) (*User, error)
+	GetAllUsers() ([]User, error)
+	UpdateUser(user *UpdateUserRequest, userID string) error
+	DeleteUser(userID string) error
 }
 
 type service struct {
@@ -21,6 +26,7 @@ func (s *service) RegisterUser(createUserRequest CreateUserRequest) error {
 	if err != nil {
 		return err
 	}
+
 
 	user := &User{
 		Username:     createUserRequest.Username,
@@ -50,4 +56,16 @@ func (s *service) AuthenticateUser(email, password string) (*User, error) {
 
 func (s *service) GetUser(userID string) (*User, error) {
 	return s.userRepo.GetUserByUsername(userID)
+}
+
+func (s *service) GetAllUsers() ([]User, error) {
+	return s.userRepo.GetAllUsers()
+}
+
+func (s *service) UpdateUser(user *UpdateUserRequest, userID string) error {
+	return s.userRepo.UpdateUser(user, userID)
+}
+
+func (s *service) DeleteUser(userID string) error {
+	return s.userRepo.DeleteUser(userID)
 }

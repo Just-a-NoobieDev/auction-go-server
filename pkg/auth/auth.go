@@ -13,13 +13,15 @@ var jwtSecret = []byte(viper.GetString("jwt_secret"))
 
 type Claims struct {
 	UserID   uuid.UUID `json:"user_id"`
+	UserRole string    `json:"user_role"`
 	jwt.StandardClaims
 }
 
-func GenerateToken(userID  uuid.UUID) (string, error) {
+func GenerateToken(userID  uuid.UUID, userRole string) (string, error) {
 	expirationTime := time.Now().Add(24 * time.Hour)
 	claims := &Claims{
 		UserID:   userID,
+		UserRole: userRole,
 		StandardClaims: jwt.StandardClaims{
 			ExpiresAt: expirationTime.Unix(),
 			IssuedAt:  time.Now().Unix(),

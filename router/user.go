@@ -11,5 +11,6 @@ func UserRouters(router *gin.RouterGroup, userHandler *user.UserHandler) {
 	user.Use(middleware.AuthMiddleware())
 	{
 		user.GET("/", userHandler.GetUser)
+		user.PUT("/", userHandler.UpdateUser)
 	}
 }

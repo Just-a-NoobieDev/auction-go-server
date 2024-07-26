@@ -29,5 +29,7 @@ func (r *Router) SetupRouter(handlers *Handlers) {
 	mainRouter := r.Engine.Group("/api/v1")
 
 	AuthRouters(mainRouter, handlers.UserHandler)
+	UserRouters(mainRouter, handlers.UserHandler)
+	AdminRouters(mainRouter, handlers)
 }
 

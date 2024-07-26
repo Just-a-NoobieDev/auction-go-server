@@ -44,7 +44,7 @@ func (h *UserHandler) AuthenticateUser(c *gin.Context) {
 		return
 	}
 
-	token, err := auth.GenerateToken(user.ID)
+	token, err := auth.GenerateToken(user.ID, user.Role)
 	if err != nil {
 		c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
 		return
@@ -63,4 +63,44 @@ func (h *UserHandler) GetUser(c *gin.Context) {
 	}
 
 	c.JSON(http.StatusOK, gin.H{"user": user})
+}
+
+func (h *UserHandler) GetAllUsers(c *gin.Context) {
+	users, err := h.UserService.GetAllUsers()
+	if err != nil {
+		c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
+		return
+	}
+
+	c.JSON(http.StatusOK, gin.H{"users": users})
+}
+
+func (h *UserHandler) UpdateUser(c *gin.Context) {
+	var updateUserRequest UpdateUserRequest
+	if err := c.ShouldBindJSON(&updateUserRequest); err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
+		return
+	}
+
+	userID := c.GetString("userID")
+
+	err := h.UserService.UpdateUser(&updateUserRequest, userID)
+	if err != nil {
+		c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
+		return
+	}
+
+	c.JSON(http.StatusOK, gin.H{})
+}
+
+func (h *UserHandler) DeleteUser(c *gin.Context) {
+	userID := c.GetString("userID")
+
+	err := h.UserService.DeleteUser(userID)
+	if err != nil {
+		c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
+		return
+	}
+
+	c.JSON(http.StatusOK, gin.H{})
 }

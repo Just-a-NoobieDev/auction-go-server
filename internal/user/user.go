@@ -14,6 +14,9 @@ type User struct {
 	FirstName    string    `json:"first_name" gorm:"not null" db:"first_name"`
 	LastName     string    `json:"last_name" gorm:"not null" db:"last_name"`
 	Phone        string    `json:"phone" gorm:"not null" db:"phone"`
+	Role 	   	 string    `json:"role,omitempty" db:"role"`
+	Address	  	 string    `json:"address,omitempty" db:"address"`
+	ProfilePicture string  `json:"profile_picture,omitempty" db:"profile_picture"`
 	CreatedAt    time.Time `json:"created_at"  db:"created_at"`
 	UpdatedAt    time.Time `json:"updated_at"  db:"updated_at"`
 	LastLogin    *time.Time `json:"last_login,omitempty" db:"last_login"` 
@@ -33,3 +36,13 @@ type AuthenticateUserRequest struct {
 	Password string `json:"password"`
 }
 
+type UpdateUserRequest struct {
+	Username  string `json:"username"`
+	Email     string `json:"email"`
+	FirstName string `json:"first_name"`
+	LastName  string `json:"last_name"`
+	Phone     string `json:"phone"`
+	Role	 string `json:"role"`
+	Address	 string `json:"address"`
+	ProfilePicture string `json:"profile_picture"`
+}
