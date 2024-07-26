@@ -43,7 +43,7 @@ type UpdateAuctionRequest struct {
 }
 
 type AuctionListResponse struct {
-	Items []*Auction `json:"items"`
+	Items []*AuctionFull `json:"items"`
 	Meta  Meta              `json:"meta"`
 }
 

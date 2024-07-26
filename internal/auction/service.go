@@ -5,12 +5,18 @@ import (
 	"github.com/google/uuid"
 )
 
+type AuctionFull struct {
+	AuctionData Auction `json:"auction"`
+	Owner user.User `json:"owner"`
+	Participants []user.User `json:"participants"`
+}
+
 type AuctionService interface {
 	CreateAuction(a *Auction) error
 	GetAuctionByID(id uuid.UUID) (*Auction, *user.User, []user.User, error)
 	UpdateAuction(a *Auction) error
 	DeleteAuction(id uuid.UUID) error
-	ListAuctions(offset int, limit int, sort string, sortDirection string, query string) ([]*Auction, error)
+	ListAuctions(offset int, limit int, sort string, sortDirection string, query string) ([]*AuctionFull, error)
 	CountAuctions(query string) (int, error)
 }
 
@@ -64,8 +70,39 @@ func (s *service) DeleteAuction(id uuid.UUID) error {
 }
 
 
-func (s *service) ListAuctions(offset int, limit int, sort string, sortDirection string, query string) ([]*Auction, error) {
-	return s.auctionRepo.ListAuctions(offset, limit, sort, sortDirection, query)
+func (s *service) ListAuctions(offset int, limit int, sort string, sortDirection string, query string) ([]*AuctionFull, error) {
+	auctions, err := s.auctionRepo.ListAuctions(offset, limit, sort, sortDirection, query)
+	if err != nil {
+		return nil, err
+	}
+
+	auctionsFull := make([]*AuctionFull, len(auctions))
+
+	for i, auction := range auctions {
+		owner, err := s.userRepo.GetUserByID(auction.OwnerID)
+		if err != nil {
+			return nil, err
+		}
+
+		participants := make([]user.User, len(auction.Participants))
+
+		for j, participant := range auction.Participants {
+			user, err := s.userRepo.GetUserByID(participant)
+			if err != nil {
+				return nil, err
+			}
+
+			participants[j] = *user
+		}
+
+		auctionsFull[i] = &AuctionFull{
+			AuctionData: *auction,
+			Owner: *owner,
+			Participants: participants,
+		}
+	}
+
+	return auctionsFull, nil
 }
 
 func (s *service) CountAuctions(query string) (int, error) {
