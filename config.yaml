@@ -5,7 +5,7 @@ database:
   host: "localhost"
   port: 5432
   user: "root"
-  password: "admin!"
+  password: "admin"
   dbname: "auction-db"
 
 jwt_secret: "your_jwt_secret_key"
