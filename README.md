@@ -2,7 +2,7 @@
 
 ## Overview
 
-This project is an online auction system built with Golang, PostgreSQL, and Gin.
+This project is the backend server of an online auction system built with Golang, PostgreSQL, and Gin - Gorm.
 
 ## Prerequisites
 
@@ -70,3 +70,34 @@ make migrate
 ```sh
 make db-down
 ```
+
+### Features Checklist
+
+- [x]  Authentication
+- [x]  User Management
+  - User Registration: Users can create accounts.
+  - User Profile: View and edit user profiles.
+  - Admin Roles: Admin users with elevated permissions.
+- [x]  Auction Management
+  - Create Auction: Users (typically sellers) can create new auction listings.
+  - Auction Details: View detailed information about an auction.
+  - Edit/Delete Auction: Sellers can edit or delete their auction listings.
+  - Search and Filter: Search and filter auctions by various criteria (e.g., category, price range).
+- [ ]  Bidding System
+  - Place Bids: Users can place bids on active auctions.
+  - Auto-Bidding: Implement automatic bidding up to a user-defined maximum.
+  - Bid History: View the history of bids on an auction.
+- [ ]  Real-Time Updates
+  - WebSockets: Implement real-time updates for new bids and auction status.
+  - Notifications: Notify users of outbid status, auction start/end, etc.
+- [ ]  Auction Lifecycle
+  - Scheduled Start/End: Auctions start and end at scheduled times.
+  - Extend Auction Time: Extend auction time if bids are placed near the end.
+  - Auction Status: Display status (upcoming, active, ended).
+- [ ]  Reviews and Ratings
+  - User Ratings: Allow users to rate each other.
+  - Auction Reviews: Allow users to leave reviews on auctions.
+- [ ]  Payment Processing
+  - Payment Integration: Integrate with payment gateways for handling transactions.
+  - Payment Verification: Verify and record successful payments.
+  - Refunds: Handle refund processes for unsuccessful auctions or disputes.
