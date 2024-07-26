@@ -1,6 +1,7 @@
 package user
 
 import (
+	"github.com/google/uuid"
 	"gorm.io/gorm"
 )
 
@@ -11,6 +12,7 @@ type UserRepository interface {
 	UpdateUser(user *UpdateUserRequest, userID string) error
 	GetAllUsers() ([]User, error)
 	DeleteUser(userID string) error
+	GetUserByID(userID uuid.UUID) (*User, error)
 }
 
 type repository struct {
@@ -62,4 +64,10 @@ func (r *repository) GetAllUsers() ([]User, error) {
 
 func (r *repository) DeleteUser(userID string) error {
 	return r.db.Where("id = ?", userID).Delete(&User{}).Error
+}
+
+func (r *repository) GetUserByID(userID uuid.UUID) (*User, error) {
+	var user User
+	err := r.db.Where("id = ?", userID).First(&user).Error
+	return &user, err
 }
