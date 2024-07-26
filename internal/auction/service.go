@@ -10,7 +10,8 @@ type AuctionService interface {
 	GetAuctionByID(id uuid.UUID) (*Auction, *user.User, []user.User, error)
 	UpdateAuction(a *Auction) error
 	DeleteAuction(id uuid.UUID) error
-	ListAuctions() ([]*Auction, error)
+	ListAuctions(offset int, limit int, sort string, sortDirection string, query string) ([]*Auction, error)
+	CountAuctions(query string) (int, error)
 }
 
 type service struct {
@@ -63,7 +64,10 @@ func (s *service) DeleteAuction(id uuid.UUID) error {
 }
 
 
-// TODO: Implement Pagination
-func (s *service) ListAuctions() ([]*Auction, error) {
-	return s.auctionRepo.ListAuctions()
+func (s *service) ListAuctions(offset int, limit int, sort string, sortDirection string, query string) ([]*Auction, error) {
+	return s.auctionRepo.ListAuctions(offset, limit, sort, sortDirection, query)
+}
+
+func (s *service) CountAuctions(query string) (int, error) {
+	return s.auctionRepo.CountAuctions(query)
 }

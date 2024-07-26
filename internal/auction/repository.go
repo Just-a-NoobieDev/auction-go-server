@@ -10,7 +10,8 @@ type AuctionRepository interface {
 	GetAuctionByID(id uuid.UUID) (*Auction, error)
 	UpdateAuction(a *Auction) error
 	DeleteAuction(id uuid.UUID) error
-	ListAuctions() ([]*Auction, error)
+	ListAuctions(offset int, limit int, sort string, sortDirection string, query string) ([]*Auction, error)
+	CountAuctions(query string) (int, error)
 }
 
 type repository struct {
@@ -39,12 +40,26 @@ func (r *repository) DeleteAuction(id uuid.UUID) error {
 	return r.db.Where("id = ?", id).Delete(&Auction{}).Error
 }
 
-func (r *repository) ListAuctions() ([]*Auction, error) {
+func (r *repository) ListAuctions(offset int, limit int, sort string, sortDirection string, query string) ([]*Auction, error) {
 	var auctions []*Auction
-	err := r.db.Find(&auctions).Error
-	if err != nil {
+	queryBuilder := r.db.Order(sort + " " + sortDirection).Offset(offset).Limit(limit)
+	if query != "" {
+		queryBuilder = queryBuilder.Where("title ILIKE ?", "%"+query+"%")
+	}
+	if err := queryBuilder.Find(&auctions).Error; err != nil {
 		return nil, err
 	}
+	return auctions, nil
+}
 
-	return auctions, err
+func (r *repository) CountAuctions(query string) (int, error) {
+	var count int64
+	queryBuilder := r.db.Model(&Auction{})
+	if query != "" {
+		queryBuilder = queryBuilder.Where("title ILIKE ?", "%"+query+"%")
+	}
+	if err := queryBuilder.Count(&count).Error; err != nil {
+		return 0, err
+	}
+	return int(count), nil
 }

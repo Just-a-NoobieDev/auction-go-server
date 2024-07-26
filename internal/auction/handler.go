@@ -2,6 +2,7 @@ package auction
 
 import (
 	"net/http"
+	"strconv"
 
 	"github.com/gin-gonic/gin"
 	"github.com/google/uuid"
@@ -121,14 +122,62 @@ func (h *AuctionHandler) DeleteAuction(c *gin.Context) {
 }
 
 func (h *AuctionHandler) ListAuctions(c *gin.Context) {
-	auctions, err := h.service.ListAuctions()
+	pageStr := c.DefaultQuery("page", "1")
+	pageSizeStr := c.DefaultQuery("page_size", "10")
+	sort := c.DefaultQuery("sort", "created_at")
+	sortDirection := c.DefaultQuery("sort_direction", "asc")
+	query := c.DefaultQuery("query", "")
+
+	page, err := strconv.Atoi(pageStr)
+	if err != nil || page < 1 {
+		c.JSON(http.StatusBadRequest, gin.H{"error": "Invalid page value"})
+		return
+	}
+
+	pageSize, err := strconv.Atoi(pageSizeStr)
+	if err != nil || pageSize < 1 {
+		c.JSON(http.StatusBadRequest, gin.H{"error": "Invalid page_size value"})
+		return
+	}
+
+	offset := (page - 1) * pageSize
+
+	auctions, err := h.service.ListAuctions(offset, pageSize, sort, sortDirection, query)
 	if err != nil {
 		c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
 		return
 	}
 
-	c.JSON(http.StatusOK, gin.H{"auctions": auctions})
-}
+	totalItems, err := h.service.CountAuctions(query) // Add a method to count total auctions
+	if err != nil {
+		c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
+		return
+	}
 
-// TODO: Implement SearchAuctions and Pagination
-// TODO: Resolve the owner_id to user details and participants to user details
+	totalPages := (totalItems + pageSize - 1) / pageSize
+	remainingItems := totalItems - (page * pageSize)
+	if remainingItems < 0 {
+		remainingItems = 0
+	}
+	remainingPages := totalPages - page
+	if remainingPages < 0 {
+		remainingPages = 0
+	}
+
+	response := AuctionListResponse{
+		Items: auctions,
+		Meta: Meta{
+			Page:           page,
+			PageSize:       pageSize,
+			TotalItems:     totalItems,
+			TotalPages:     totalPages,
+			RemainingItems: remainingItems,
+			RemainingPages: remainingPages,
+			Sort:           sort,
+			SortDirection:  sortDirection,
+			Query:          query,
+		},
+	}
+
+	c.JSON(http.StatusOK, response)
+}

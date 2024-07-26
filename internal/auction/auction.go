@@ -41,3 +41,20 @@ type UpdateAuctionRequest struct {
 	MinIncrement float64   `json:"min_increment"`
 	Status       string    `json:"status"`
 }
+
+type AuctionListResponse struct {
+	Items []*Auction `json:"items"`
+	Meta  Meta              `json:"meta"`
+}
+
+type Meta struct {
+	Page           int    `json:"page"`
+	PageSize       int    `json:"page_size"`
+	TotalItems     int    `json:"total_items"`
+	TotalPages     int    `json:"total_pages"`
+	RemainingItems int    `json:"remaining_items"`
+	RemainingPages int    `json:"remaining_pages"`
+	Sort           string `json:"sort"`
+	SortDirection  string `json:"sort_direction"`
+	Query          string `json:"query"`
+}

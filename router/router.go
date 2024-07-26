@@ -1,6 +1,7 @@
 package router
 
 import (
+	"github.com/Just-A-NoobieDev/auction-go-server/internal/auction"
 	"github.com/Just-A-NoobieDev/auction-go-server/internal/user"
 	"github.com/gin-gonic/gin"
 )
@@ -17,6 +18,7 @@ func NewRouter() *Router {
 
 type Handlers struct {
 	UserHandler *user.UserHandler
+	AuctionHandler *auction.AuctionHandler
 }
 
 func (r *Router) SetupRouter(handlers *Handlers) {
@@ -31,5 +33,6 @@ func (r *Router) SetupRouter(handlers *Handlers) {
 	AuthRouters(mainRouter, handlers.UserHandler)
 	UserRouters(mainRouter, handlers.UserHandler)
 	AdminRouters(mainRouter, handlers)
+	AuctionRouters(mainRouter, handlers.AuctionHandler)
 }
 
