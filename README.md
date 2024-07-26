@@ -49,8 +49,6 @@ Create a new SQL file in the migrations directory (e.g., migrations/20210725_cre
 Add your SQL commands to the file. For example:
 
 ```sh
-sql
-Copy code
 CREATE TABLE items (
     id SERIAL PRIMARY KEY,
     name VARCHAR(255) NOT NULL,
