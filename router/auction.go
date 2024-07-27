@@ -7,7 +7,7 @@ import (
 )
 
 func AuctionRouters(router *gin.RouterGroup, auctionHandler *auction.AuctionHandler) {
-	auction := router.Group("/auction")
+	auction := router.Group("/auctions")
 	auction.Use(middleware.AuthMiddleware())
 	{
 		auction.GET("/", auctionHandler.ListAuctions)
@@ -15,5 +15,7 @@ func AuctionRouters(router *gin.RouterGroup, auctionHandler *auction.AuctionHand
 		auction.POST("/", auctionHandler.CreateAuction)
 		auction.PUT("/:id", auctionHandler.UpdateAuction)
 		auction.DELETE("/:id", auctionHandler.DeleteAuction)
+		auction.POST("/:id/join", auctionHandler.JoinAuction)
+		auction.POST("/:id/leave", auctionHandler.LeaveAuction)
 	}
 }

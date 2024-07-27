@@ -1,6 +1,8 @@
 package auction
 
 import (
+	"errors"
+
 	"github.com/Just-A-NoobieDev/auction-go-server/internal/user"
 	"github.com/google/uuid"
 )
@@ -18,6 +20,8 @@ type AuctionService interface {
 	DeleteAuction(id uuid.UUID) error
 	ListAuctions(offset int, limit int, sort string, sortDirection string, query string) ([]*AuctionFull, error)
 	CountAuctions(query string) (int, error)
+	JoinAuction(auctionID uuid.UUID, userID uuid.UUID) error
+	LeaveAuction(auctionID uuid.UUID, userID uuid.UUID) error
 }
 
 type service struct {
@@ -107,4 +111,48 @@ func (s *service) ListAuctions(offset int, limit int, sort string, sortDirection
 
 func (s *service) CountAuctions(query string) (int, error) {
 	return s.auctionRepo.CountAuctions(query)
+}
+
+func (s *service) JoinAuction(auctionID uuid.UUID, userID uuid.UUID) error {
+	auction, err := s.auctionRepo.GetAuctionByID(auctionID)
+	if err != nil {
+		return err
+	}
+
+	if auction.OwnerID == userID {
+		return errors.New("you can't join your own auction")
+	}
+
+	for _, participant := range auction.Participants {
+		if participant == userID {
+			return errors.New("you already joined this auction")
+		}
+	}
+
+	return s.auctionRepo.UpdateAuction(&Auction{
+		ID: auctionID,
+		Participants: append(auction.Participants, userID),
+	})
+
+
+}
+
+func (s *service) LeaveAuction(auctionID uuid.UUID, userID uuid.UUID) error {
+	auction, err := s.auctionRepo.GetAuctionByID(auctionID)
+	if err != nil {
+		return err
+	}
+
+	if auction.OwnerID == userID {
+		return errors.New("you can't leave your own auction")
+	}
+
+	for i, participant := range auction.Participants {
+		if participant == userID {
+			auction.Participants = append(auction.Participants[:i], auction.Participants[i+1:]...)
+			return s.auctionRepo.UpdateAuction(auction)
+		}
+	}
+
+	return errors.New("you are not a participant of this auction")
 }

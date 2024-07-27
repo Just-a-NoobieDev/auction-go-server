@@ -7,7 +7,7 @@ import (
 )
 
 func UserRouters(router *gin.RouterGroup, userHandler *user.UserHandler) {
-	user := router.Group("/user")
+	user := router.Group("/users")
 	user.Use(middleware.AuthMiddleware())
 	{
 		user.GET("/", userHandler.GetUser)

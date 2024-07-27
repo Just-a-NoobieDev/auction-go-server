@@ -22,9 +22,11 @@ func (h *AuctionHandler) CreateAuction(c *gin.Context) {
 		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
 		return
 	}
-	
+
+	newId := uuid.New()
 
 	auction := &Auction{
+		ID: newId,
 		Title: 	 createAuctionRequest.Title,
 		Description: createAuctionRequest.Description,
 		StartPrice: createAuctionRequest.StartPrice,
@@ -180,4 +182,42 @@ func (h *AuctionHandler) ListAuctions(c *gin.Context) {
 	}
 
 	c.JSON(http.StatusOK, response)
+}
+
+func (h *AuctionHandler) JoinAuction(c *gin.Context) {
+	auctionID := c.Param("id")
+	id, err := uuid.Parse(auctionID)
+	if err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
+		return
+	}
+
+	userID := uuid.MustParse(c.GetString("userID"))
+
+	err = h.service.JoinAuction(id, userID)
+	if err != nil {
+		c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
+		return
+	}
+
+	c.JSON(http.StatusOK, gin.H{})
+}
+
+func (h *AuctionHandler) LeaveAuction(c *gin.Context) {
+	auctionID := c.Param("id")
+	id, err := uuid.Parse(auctionID)
+	if err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
+		return
+	}
+
+	userID := uuid.MustParse(c.GetString("userID"))
+
+	err = h.service.LeaveAuction(id, userID)
+	if err != nil {
+		c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
+		return
+	}
+
+	c.JSON(http.StatusOK, gin.H{})
 }
