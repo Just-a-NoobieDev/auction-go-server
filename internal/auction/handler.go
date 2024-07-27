@@ -186,15 +186,10 @@ func (h *AuctionHandler) ListAuctions(c *gin.Context) {
 
 func (h *AuctionHandler) JoinAuction(c *gin.Context) {
 	auctionID := c.Param("id")
-	id, err := uuid.Parse(auctionID)
-	if err != nil {
-		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
-		return
-	}
 
 	userID := uuid.MustParse(c.GetString("userID"))
 
-	err = h.service.JoinAuction(id, userID)
+	err := h.service.JoinAuction(uuid.MustParse(auctionID), userID)
 	if err != nil {
 		c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
 		return

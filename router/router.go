@@ -2,6 +2,7 @@ package router
 
 import (
 	"github.com/Just-A-NoobieDev/auction-go-server/internal/auction"
+	"github.com/Just-A-NoobieDev/auction-go-server/internal/bidding"
 	"github.com/Just-A-NoobieDev/auction-go-server/internal/user"
 	"github.com/gin-gonic/gin"
 )
@@ -19,9 +20,11 @@ func NewRouter() *Router {
 type Handlers struct {
 	UserHandler *user.UserHandler
 	AuctionHandler *auction.AuctionHandler
+	BidHandler *bidding.BidHandler
 }
 
 func (r *Router) SetupRouter(handlers *Handlers) {
+
 	r.Engine.GET("/", func(c *gin.Context) {
 		c.JSON(200, gin.H{
 			"message": "ok",
@@ -34,5 +37,6 @@ func (r *Router) SetupRouter(handlers *Handlers) {
 	UserRouters(mainRouter, handlers.UserHandler)
 	AdminRouters(mainRouter, handlers)
 	AuctionRouters(mainRouter, handlers.AuctionHandler)
+	BidRouters(mainRouter, handlers.BidHandler)
 }
 

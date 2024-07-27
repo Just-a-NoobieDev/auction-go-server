@@ -80,12 +80,13 @@ make db-down
   - Admin Roles: Admin users with elevated permissions.
 - [x]  Auction Management
   - Create Auction: Users (typically sellers) can create new auction listings.
+  - Join and Leave Auction
   - Auction Details: View detailed information about an auction.
   - Edit/Delete Auction: Sellers can edit or delete their auction listings.
   - Search and Filter: Search and filter auctions by various criteria (e.g., category, price range).
-- [ ]  Bidding System
+- [x]  Bidding System
   - Place Bids: Users can place bids on active auctions.
-  - Auto-Bidding: Implement automatic bidding up to a user-defined maximum.
+  - [ ] Auto-Bidding: Implement automatic bidding up to a user-defined maximum. (Will do it after the auction lifecycle)
   - Bid History: View the history of bids on an auction.
 - [ ]  Real-Time Updates
   - WebSockets: Implement real-time updates for new bids and auction status.

@@ -129,12 +129,8 @@ func (s *service) JoinAuction(auctionID uuid.UUID, userID uuid.UUID) error {
 		}
 	}
 
-	return s.auctionRepo.UpdateAuction(&Auction{
-		ID: auctionID,
-		Participants: append(auction.Participants, userID),
-	})
-
-
+	auction.Participants = append(auction.Participants, userID)
+	return s.auctionRepo.UpdateAuction(auction)
 }
 
 func (s *service) LeaveAuction(auctionID uuid.UUID, userID uuid.UUID) error {
