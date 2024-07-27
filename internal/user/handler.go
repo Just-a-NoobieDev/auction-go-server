@@ -24,11 +24,32 @@ func (h *UserHandler) RegisterUser(c *gin.Context) {
 
 	err := h.UserService.RegisterUser(createUserRequest)
 	if err != nil {
+		if err.Error() == "ERROR: duplicate key value violates unique constraint \"users_username_key\" (SQLSTATE 23505)" {
+			c.JSON(http.StatusBadRequest, gin.H{"error": "Username already exists"})
+			return
+		}
+
+		if err.Error() == "ERROR: duplicate key value violates unique constraint \"users_email_key\" (SQLSTATE 23505)" {
+			c.JSON(http.StatusBadRequest, gin.H{"error": "Email already exists"})
+			return
+		}
+
 		c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
 		return
 	}
 
-	c.JSON(http.StatusCreated, gin.H{})
+	cleanUser := User{
+		Username: createUserRequest.Username,
+		Email: createUserRequest.Email,
+		FirstName: createUserRequest.FirstName,
+		LastName: createUserRequest.LastName,
+		Phone: createUserRequest.Phone,
+	}
+
+	c.JSON(http.StatusCreated, gin.H{
+		"message": "User created successfully",
+		"user": cleanUser,
+	})
 }
 
 func (h *UserHandler) AuthenticateUser(c *gin.Context) {
@@ -82,19 +103,37 @@ func (h *UserHandler) UpdateUser(c *gin.Context) {
 		return
 	}
 
-	userID := c.GetString("userID")
+	userID := c.Param("id")
+
+	if userID == "" {
+		c.JSON(http.StatusBadRequest, gin.H{"error": "User ID is required"})
+		return
+	}
 
 	err := h.UserService.UpdateUser(&updateUserRequest, userID)
 	if err != nil {
+		if err.Error() == "record not found" {
+			c.JSON(http.StatusNotFound, gin.H{"error": "User not found"})
+			return
+		}
+
 		c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
 		return
 	}
 
-	c.JSON(http.StatusOK, gin.H{})
+	c.JSON(http.StatusOK, gin.H{
+		"message": "User updated successfully",
+		"user": updateUserRequest,
+	})
 }
 
 func (h *UserHandler) DeleteUser(c *gin.Context) {
-	userID := c.GetString("userID")
+	userID := c.Param("id")
+
+	if userID == "" {
+		c.JSON(http.StatusBadRequest, gin.H{"error": "User ID is required"})
+		return
+	}
 
 	err := h.UserService.DeleteUser(userID)
 	if err != nil {
@@ -102,5 +141,7 @@ func (h *UserHandler) DeleteUser(c *gin.Context) {
 		return
 	}
 
-	c.JSON(http.StatusOK, gin.H{})
+	c.JSON(http.StatusOK, gin.H{
+		"message": "User deleted successfully",
+	})
 }

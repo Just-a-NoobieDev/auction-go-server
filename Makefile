@@ -17,7 +17,7 @@ migrate:
 
 dev:
 	@echo "Starting development server with live reloading..."
-	rm -rf ./tmp && air -c .air.toml
+	rm -rf ./tmp && npx kill-port 8080 && air -c .air.toml
 	
 
 db-up:

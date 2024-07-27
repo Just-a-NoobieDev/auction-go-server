@@ -7,7 +7,7 @@ import (
 
 func AdminRouters(router *gin.RouterGroup, handlers *Handlers) {
 	admin := router.Group("/admin")
-	admin.Use(middleware.AuthMiddleware())
+	admin.Use(middleware.AdminMiddleware())
 	{
 		admin.GET("/", handlers.UserHandler.GetAllUsers)
 		admin.DELETE("/:id", handlers.UserHandler.DeleteUser)

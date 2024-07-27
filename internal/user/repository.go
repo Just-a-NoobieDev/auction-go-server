@@ -42,7 +42,6 @@ func (r *repository) GetUserByUsername(username string) (*User, error) {
 func (r *repository) UpdateUser(user *UpdateUserRequest, userID string) error {
 	return r.db.Model(&User{}).Where("id = ?", userID).Updates(User{
 		Username: user.Username,
-		Email: user.Email,
 		FirstName: user.FirstName,
 		LastName: user.LastName,
 		Phone: user.Phone,

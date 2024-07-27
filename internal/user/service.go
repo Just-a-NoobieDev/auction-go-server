@@ -1,6 +1,7 @@
 package user
 
 import (
+	"github.com/google/uuid"
 	"golang.org/x/crypto/bcrypt"
 )
 
@@ -27,8 +28,11 @@ func (s *service) RegisterUser(createUserRequest CreateUserRequest) error {
 		return err
 	}
 
+	newId := uuid.New()
+
 
 	user := &User{
+		ID:           newId,
 		Username:     createUserRequest.Username,
 		Email:        createUserRequest.Email,
 		PasswordHash: string(hashedPassword),
@@ -55,17 +59,41 @@ func (s *service) AuthenticateUser(email, password string) (*User, error) {
 }
 
 func (s *service) GetUser(userID string) (*User, error) {
-	return s.userRepo.GetUserByUsername(userID)
+	return s.userRepo.GetUserByID(uuid.MustParse(userID))
 }
 
+
+// TODO: Implement pagination and search
 func (s *service) GetAllUsers() ([]User, error) {
 	return s.userRepo.GetAllUsers()
 }
 
 func (s *service) UpdateUser(user *UpdateUserRequest, userID string) error {
+	err := uuid.Validate(userID)
+
+	if err != nil {
+		return err
+	}
+
+	_, err = s.userRepo.GetUserByID(uuid.MustParse(userID))
+	if err != nil {
+		return err
+	}
+
 	return s.userRepo.UpdateUser(user, userID)
 }
 
 func (s *service) DeleteUser(userID string) error {
+	err := uuid.Validate(userID)
+
+	if err != nil {
+		return err
+	}
+
+	_, err = s.userRepo.GetUserByID(uuid.MustParse(userID))
+	if err != nil {
+		return err
+	}
+
 	return s.userRepo.DeleteUser(userID)
 }
