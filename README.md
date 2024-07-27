@@ -88,9 +88,9 @@ make db-down
   - Place Bids: Users can place bids on active auctions.
   - [ ] Auto-Bidding: Implement automatic bidding up to a user-defined maximum. (Will do it after the auction lifecycle)
   - Bid History: View the history of bids on an auction.
-- [ ]  Real-Time Updates
+- [x]  Real-Time Updates
   - WebSockets: Implement real-time updates for new bids and auction status.
-  - Notifications: Notify users of outbid status, auction start/end, etc.
+  - [ ] Notifications: Notify users of outbid status, auction start/end, etc. (not yet implemented)
 - [ ]  Auction Lifecycle
   - Scheduled Start/End: Auctions start and end at scheduled times.
   - Extend Auction Time: Extend auction time if bids are placed near the end.
